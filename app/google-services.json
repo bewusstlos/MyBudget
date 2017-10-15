@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "170680466358",
+    "firebase_url": "https://mybudget-ae766.firebaseio.com",
+    "project_id": "mybudget-ae766",
+    "storage_bucket": "mybudget-ae766.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:170680466358:android:1003b2764ec56709",
+        "android_client_info": {
+          "package_name": "net.bewusstlos.mybudget"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "170680466358-h7vagih92k5usun167n8c1trbnn2tqi0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDzJBtnIsIO6vd24eqgLQwqsf_-yEIa-As"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
