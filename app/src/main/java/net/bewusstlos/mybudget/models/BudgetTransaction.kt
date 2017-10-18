@@ -1,11 +1,17 @@
 package net.bewusstlos.mybudget.models
 
-import java.util.*
-
 /**
- * Created by bewusstlos on 10/14/2017.
+ * Created by bewusstlos on 10/17/2017.
  */
-interface BudgetTransaction {
-    val date: Date?
-    val value: Float?
+class BudgetTransaction() {
+    var value: Float = 0F
+    var date: Long = 0L
+    var category: String = ""
+
+    constructor(value: Float, date: Long, category: String) : this() {
+        this.value = value
+        this.date = date
+        this.category = category
+    }
+
 }

@@ -5,6 +5,8 @@ import android.os.Bundle
 import android.support.design.widget.BottomNavigationView
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
+import android.view.View
+import android.view.animation.AnimationUtils
 import android.widget.PopupMenu
 import kotlinx.android.synthetic.main.activity_main.*
 import net.bewusstlos.mybudget.R
@@ -15,6 +17,7 @@ import net.bewusstlos.mybudget.fragments.ExpensesFragment
 import net.bewusstlos.mybudget.fragments.IncomeFragment
 import net.bewusstlos.mybudget.fragments.StatisticsFragment
 import net.bewusstlos.mybudget.services.ServicesContainer
+import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.find
 import org.jetbrains.anko.sdk25.coroutines.onClick
 import java.util.*
@@ -58,8 +61,6 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         val budget = ServicesContainer.budgetService.getBudget()
         val toolbar: Toolbar = find(R.id.toolbar)
-        toolbar.title = "${resources.getString(R.string.app_name)}: ${ServicesContainer.budgetService.currentBudget?.balance} " +
-                "${Currency.getInstance(ServicesContainer.budgetService.currentBudget?.currencyCode).symbol}"
 
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
         b_more.onClick {
@@ -79,5 +80,55 @@ class MainActivity : AppCompatActivity() {
             popupMenu.show()
         }
         addFragment(ExpensesFragment.newInstance(), R.id.fragment_container)
+
+        add.onClick {
+            val anim = AnimationUtils.loadAnimation(this@MainActivity, R.anim.rotate_and_scale_down)
+            val incomeExpenseAnim = AnimationUtils.loadAnimation(this@MainActivity, R.anim.f_buttons_move_up)
+            val reverseAnim = AnimationUtils.loadAnimation(this@MainActivity, R.anim.rotate_and_scale_up)
+            val reverseIncomeExpenseAnim = AnimationUtils.loadAnimation(this@MainActivity, R.anim.f_buttons_move_down)
+
+            if (income.visibility == View.GONE) {
+                income.visibility = View.VISIBLE
+                expense.visibility = View.VISIBLE
+                income.startAnimation(incomeExpenseAnim)
+                expense.startAnimation(incomeExpenseAnim)
+                add.startAnimation(anim)
+            } else {
+                income.startAnimation(reverseIncomeExpenseAnim)
+                expense.startAnimation(reverseIncomeExpenseAnim)
+                add.startAnimation(reverseAnim)
+                doAsync {
+                    Thread.sleep(anim.duration)
+                    runOnUiThread({
+                        income.visibility = View.GONE
+                        expense.visibility = View.GONE
+                    })
+                }
+
+            }
+            //navigateTo(inflater.context, AddTransactionActivity::class.java)
+        }
+
+        b_add_income.onClick {
+            val i = Intent(this@MainActivity, AddTransactionActivity::class.java)
+            i.putExtra("TypeOfTransaction", "Income")
+            startActivity(i)
+        }
+
+        b_add_expense.onClick {
+            val i = Intent(this@MainActivity, AddTransactionActivity::class.java)
+            i.putExtra("TypeOfTransaction", "Expense")
+            startActivity(i)
+        }
+    }
+
+    inline fun setBudgetTitle() {
+        toolbar.title = "${resources.getString(R.string.app_name)}: ${ServicesContainer.budgetService.currentBudget?.balance} " +
+                "${Currency.getInstance(ServicesContainer.budgetService.currentBudget?.currencyCode).symbol}"
+    }
+
+    override fun onResume() {
+        super.onResume()
+        setBudgetTitle()
     }
 }

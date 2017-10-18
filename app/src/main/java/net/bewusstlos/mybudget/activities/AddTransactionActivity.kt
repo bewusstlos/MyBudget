@@ -1,22 +1,38 @@
 package net.bewusstlos.mybudget.activities
 
+import android.app.DatePickerDialog
+import android.graphics.Typeface
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.widget.Button
+import android.widget.DatePicker
 import android.widget.TextView
 import kotlinx.android.synthetic.main.activity_add_transaction.*
 import net.bewusstlos.mybudget.R
+import net.bewusstlos.mybudget.models.BudgetTransaction
 import net.bewusstlos.mybudget.services.ServicesContainer
 import org.jetbrains.anko.find
+import org.jetbrains.anko.sdk25.coroutines.onClick
+import org.jetbrains.anko.selector
 import java.util.*
 
-class AddTransactionActivity : AppCompatActivity() {
+class AddTransactionActivity : AppCompatActivity(), DatePickerDialog.OnDateSetListener {
 
+    override fun onDateSet(p0: DatePicker?, p1: Int, p2: Int, p3: Int) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    companion object {
+        val TYPE_OF_TRANSACTION = "TypeOfTransaction"
+    }
     lateinit var tvValue: TextView
     var bufferedValue: String = ""
     var bufferedOperator: String? = null
     var shouldClearAfterOperator = false
+    var selectedDate: Calendar = Calendar.getInstance()
+
+    lateinit var datePickerDialog: DatePickerDialog
 
     fun calcButtonClick(view: View?) {
         when (view?.id) {
@@ -97,6 +113,49 @@ class AddTransactionActivity : AppCompatActivity() {
 
         tvValue = find(R.id.value)
         currency.text = Currency.getInstance(ServicesContainer.budgetService.currentBudget?.currencyCode).symbol
+
+        datePickerDialog = DatePickerDialog(this, 0, DatePickerDialog.OnDateSetListener { p0, year, month, dayOfMonth ->
+            selectedDate.set(year, month, dayOfMonth)
+            today.typeface = Typeface.DEFAULT
+            yesterday.typeface = Typeface.DEFAULT
+        }, Calendar.getInstance().get(Calendar.YEAR), Calendar.getInstance().get(Calendar.MONTH), Calendar.getInstance().get(Calendar.DAY_OF_MONTH))
+
+        val categories = listOf("House", "Food", "Entertaiment", "Other")
+        select_category.onClick {
+            selector("Choose category", categories, { _, i ->
+                category.text = categories[i]
+            })
+        }
+
+        b_done.onClick {
+            ServicesContainer.budgetService.addTransaction(
+                    BudgetTransaction(
+                            if (intent.getStringExtra("TypeOfTransaction") == "Income")
+                                tvValue.text.toString().toFloat()
+                            else
+                                (tvValue.text.toString().toFloat() * -1),
+                            selectedDate.timeInMillis, category.text.toString()
+                    ))
+            this@AddTransactionActivity.onBackPressed()
+        }
+
+        today.onClick {
+            today.typeface = Typeface.DEFAULT_BOLD
+            yesterday.typeface = Typeface.DEFAULT
+            selectedDate = Calendar.getInstance()
+        }
+
+        yesterday.onClick {
+            today.typeface = Typeface.DEFAULT
+            yesterday.typeface = Typeface.DEFAULT_BOLD
+            val yesterday = Calendar.getInstance()
+            yesterday.add(Calendar.DAY_OF_MONTH, -1)
+            selectedDate = yesterday
+        }
+
+        set_date.onClick {
+            datePickerDialog.show()
+        }
     }
 
     fun addSymbolToValue(symbol: CharSequence) {

@@ -3,10 +3,15 @@ package net.bewusstlos.mybudget.fragments
 import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import kotlinx.android.synthetic.main.fragment_expenses.view.*
+import kotlinx.android.synthetic.main.fragment_income.*
 import net.bewusstlos.mybudget.R
+import net.bewusstlos.mybudget.adapters.TransactionAdapter
+import net.bewusstlos.mybudget.services.ServicesContainer
 
 /**
  * A simple [Fragment] subclass.
@@ -18,6 +23,7 @@ import net.bewusstlos.mybudget.R
  */
 class IncomeFragment : Fragment() {
 
+    lateinit var incomeAdapter: TransactionAdapter
     // TODO: Rename and change types of parameters
     private var mParam1: String? = null
     private var mParam2: String? = null
@@ -33,7 +39,21 @@ class IncomeFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
-        return inflater!!.inflate(R.layout.fragment_income, container, false)
+        val view = inflater!!.inflate(R.layout.fragment_income, container, false)
+        with(view) {
+            val transactions = ServicesContainer.budgetService.currentBudget?.transactions?.map { it.value }?.filter { it.value > 0 }?.sortedByDescending { it.date }?.toMutableList()
+            if (transactions != null) {
+                expenses.layoutManager = LinearLayoutManager(this@IncomeFragment.context)
+                incomeAdapter = TransactionAdapter(this@IncomeFragment.context, transactions)
+                expenses.adapter = incomeAdapter
+            }
+        }
+        return view
+    }
+
+    override fun onResume() {
+        super.onResume()
+        expenses.invalidate()
     }
 
     /**

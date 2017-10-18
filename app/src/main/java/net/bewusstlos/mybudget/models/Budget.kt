@@ -3,15 +3,12 @@ package net.bewusstlos.mybudget.models
 /**
  * Created by bewusstlos on 10/13/2017.
  */
-class Budget {
-    lateinit var currencyCode: String
+open class Budget() {
+    var currencyCode: String = ""
     var balance: Float = 0.0f
-    val incomes: List<Income>? = null
-    val expenses: List<Expense>? = null
+    var transactions: MutableMap<String, BudgetTransaction> = mutableMapOf()
 
-    constructor() {}
-
-    constructor(currencyCode: String, balance: Float) {
+    constructor(currencyCode: String, balance: Float) : this() {
         this.currencyCode = currencyCode
         this.balance = balance
     }

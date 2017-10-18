@@ -45,8 +45,12 @@ class LoginActivity : AppCompatActivity() {
         doAsync {
             if (ServicesContainer.budgetService.getBudget() == null)
                 runOnUiThread({ navigateTo(AddBudgetActivity::class.java) })
-            else
-                runOnUiThread({ navigateTo(MainActivity::class.java) })
+            else {
+                runOnUiThread({
+                    navigateTo(MainActivity::class.java)
+                })
+            }
+
             alert.hide()
         }
     }

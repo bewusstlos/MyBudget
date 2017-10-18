@@ -7,6 +7,8 @@ import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentTransaction
 import android.support.v7.app.AppCompatActivity
 import net.bewusstlos.mybudget.R
+import java.text.SimpleDateFormat
+import java.util.*
 import java.util.regex.Pattern
 
 /**
@@ -56,4 +58,9 @@ fun Fragment.navigateTo(context: Context, cls: Class<*>, activityFlags: Int? = n
     if (activityFlags != null)
         i.flags = activityFlags
     startActivity(i)
+}
+
+fun Calendar.toHumanString(format: String = "dd MMMM yyyy"): String {
+    val dateFormat = SimpleDateFormat(format)
+    return dateFormat.format(this.time)
 }

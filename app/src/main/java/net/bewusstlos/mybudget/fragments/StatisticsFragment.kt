@@ -6,7 +6,17 @@ import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.github.mikephil.charting.charts.PieChart
+import com.github.mikephil.charting.data.Entry
+import com.github.mikephil.charting.data.PieData
+import com.github.mikephil.charting.data.PieDataSet
+import com.github.mikephil.charting.data.PieEntry
+import com.github.mikephil.charting.formatter.IValueFormatter
+import com.github.mikephil.charting.utils.ColorTemplate
+import com.github.mikephil.charting.utils.ViewPortHandler
 import net.bewusstlos.mybudget.R
+import net.bewusstlos.mybudget.services.ServicesContainer
+import org.jetbrains.anko.find
 
 /**
  * A simple [Fragment] subclass.
@@ -34,7 +44,35 @@ class StatisticsFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
-        return inflater!!.inflate(R.layout.fragment_statistics, container, false)
+        val view = inflater!!.inflate(R.layout.fragment_statistics, container, false)
+        val expensesList = ServicesContainer.budgetService.currentBudget?.transactions?.map { it.value }?.filter { it.value < 0 }?.groupBy { it.category }
+        var expensesData: MutableMap<String, Double> = mutableMapOf()
+        if (expensesList != null)
+            for (expense in expensesList) {
+                expensesData.put(expense.key, expense.value.sumByDouble { it.value.toDouble() })
+            }
+        var expensesChart = view.find<PieChart>(R.id.expenses_chart)
+        if (expensesList != null) {
+            val expensesPieEntries = mutableListOf<PieEntry>()
+            for (item in expensesData) {
+                expensesPieEntries.add(PieEntry(item.value.toFloat() * -1, item.key))
+            }
+            var pieDataSet = PieDataSet(expensesPieEntries, "Expenses")
+            pieDataSet.colors = ColorTemplate.MATERIAL_COLORS.toMutableList()
+            pieDataSet.valueTextSize = 20F
+            pieDataSet.valueTextColor = resources.getColor(R.color.colorPrimary)
+            pieDataSet.valueFormatter = object : IValueFormatter {
+                override fun getFormattedValue(value: Float, entry: Entry?, dataSetIndex: Int, viewPortHandler: ViewPortHandler?): String {
+                    return "${"%.2f".format(value)} %"
+                }
+            }
+            pieDataSet.sliceSpace = 3F
+            var pieData = PieData(pieDataSet)
+            expensesChart.data = PieData(pieDataSet)
+            expensesChart.setUsePercentValues(true)
+            expensesChart.invalidate()
+        }
+        return view
     }
 
     /**

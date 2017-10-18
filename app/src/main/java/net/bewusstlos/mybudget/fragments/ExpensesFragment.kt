@@ -2,15 +2,16 @@ package net.bewusstlos.mybudget.fragments
 
 import android.net.Uri
 import android.os.Bundle
-import android.support.design.widget.FloatingActionButton
 import android.support.v4.app.Fragment
+import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import kotlinx.android.synthetic.main.fragment_expenses.*
+import kotlinx.android.synthetic.main.fragment_expenses.view.*
 import net.bewusstlos.mybudget.R
-import net.bewusstlos.mybudget.activities.AddTransactionActivity
-import net.bewusstlos.mybudget.common.navigateTo
-import org.jetbrains.anko.sdk25.coroutines.onClick
+import net.bewusstlos.mybudget.adapters.TransactionAdapter
+import net.bewusstlos.mybudget.services.ServicesContainer
 
 /**
  * A simple [Fragment] subclass.
@@ -22,6 +23,7 @@ import org.jetbrains.anko.sdk25.coroutines.onClick
  */
 class ExpensesFragment : Fragment() {
 
+    lateinit var expensesAdapter: TransactionAdapter
     // TODO: Rename and change types of parameters
     private var mParam1: String? = null
     private var mParam2: String? = null
@@ -38,11 +40,20 @@ class ExpensesFragment : Fragment() {
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         val view = inflater!!.inflate(R.layout.fragment_expenses, container, false)
-        val addExpenses = view.findViewById<FloatingActionButton>(R.id.add_expenses)
-        addExpenses.onClick {
-            navigateTo(inflater.context, AddTransactionActivity::class.java)
+        with(view) {
+            val transactions = ServicesContainer.budgetService.currentBudget?.transactions?.map { it.value }?.filter { it.value < 0 }?.sortedByDescending { it.date }?.toMutableList()
+            if (transactions != null) {
+                expenses.layoutManager = LinearLayoutManager(this@ExpensesFragment.context)
+                expensesAdapter = TransactionAdapter(this@ExpensesFragment.context, transactions)
+                expenses.adapter = expensesAdapter
+            }
         }
         return view
+    }
+
+    override fun onResume() {
+        super.onResume()
+        expenses.invalidate()
     }
 
     /**

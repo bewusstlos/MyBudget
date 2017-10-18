@@ -6,6 +6,8 @@ apply plugin: 'kotlin-android-extensions'
 
 apply plugin: 'kotlin-kapt'
 
+apply plugin: 'realm-android'
+
 android {
     signingConfigs {
         config {
@@ -35,6 +37,10 @@ android {
     kapt {
         generateStubs = true
     }
+
+    realm{
+        syncEnabled = true
+    }
 }
 
 dependencies {
@@ -53,9 +59,11 @@ dependencies {
     compile 'com.google.firebase:firebase-database:11.4.2'
     compile 'com.google.android.gms:play-services-auth:11.4.2'
     compile 'com.google.dagger:dagger:2.12'
+    compile 'com.github.PhilJay:MPAndroidChart:v3.0.1'
     kapt 'com.google.dagger:dagger-compiler:2.11'
     compile 'org.jetbrains.anko:anko:0.10.1'
     implementation 'io.reactivex.rxjava2:rxkotlin:2.1.0'
+    implementation 'com.android.support:cardview-v7:26.1.0'
 }
 
 apply plugin: 'com.google.gms.google-services'
