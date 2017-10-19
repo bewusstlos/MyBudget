@@ -7,7 +7,6 @@ import android.support.v7.app.AppCompatActivity
 import android.widget.Button
 import com.google.android.gms.auth.api.Auth
 import com.google.android.gms.common.SignInButton
-import com.google.firebase.auth.FirebaseAuth
 import net.bewusstlos.mybudget.R
 import net.bewusstlos.mybudget.common.isEmailAddress
 import net.bewusstlos.mybudget.common.navigateTo
@@ -30,13 +29,6 @@ class LoginActivity : AppCompatActivity() {
 
     companion object {
         val RC_GOOGLE_SIGN_IN = 123
-    }
-
-    override fun onStart() {
-        super.onStart()
-        if (FirebaseAuth.getInstance().currentUser != null) {
-            prepareToLogin()
-        }
     }
 
     fun prepareToLogin() {

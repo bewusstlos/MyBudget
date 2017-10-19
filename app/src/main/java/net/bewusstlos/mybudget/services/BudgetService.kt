@@ -12,7 +12,9 @@ import net.bewusstlos.mybudget.models.BudgetTransaction
  * Created by bewusstlos on 10/13/2017.
  */
 class BudgetService {
+
     var currentBudget: Budget? = null
+
     fun getBudget(): Budget? {
         val tcs: TaskCompletionSource<Budget?> = TaskCompletionSource()
         val ref = FirebaseDatabase.getInstance().getReference("/users/${FirebaseAuth.getInstance().currentUser?.uid}/budget")

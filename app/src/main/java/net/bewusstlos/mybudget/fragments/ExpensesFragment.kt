@@ -41,6 +41,7 @@ class ExpensesFragment : Fragment() {
         // Inflate the layout for this fragment
         val view = inflater!!.inflate(R.layout.fragment_expenses, container, false)
         with(view) {
+            val s = ServicesContainer.budgetService.currentBudget?.transactions
             val transactions = ServicesContainer.budgetService.currentBudget?.transactions?.map { it.value }?.filter { it.value < 0 }?.sortedByDescending { it.date }?.toMutableList()
             if (transactions != null) {
                 expenses.layoutManager = LinearLayoutManager(this@ExpensesFragment.context)
