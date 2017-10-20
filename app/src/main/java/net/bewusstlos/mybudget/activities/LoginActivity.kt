@@ -36,14 +36,17 @@ class LoginActivity : AppCompatActivity() {
         alert.show()
         doAsync {
             if (ServicesContainer.budgetService.getBudget() == null)
-                runOnUiThread({ navigateTo(AddBudgetActivity::class.java) })
+                runOnUiThread({
+                    alert.hide()
+                    navigateTo(AddBudgetActivity::class.java)
+                })
             else {
                 runOnUiThread({
+                    alert.hide()
                     navigateTo(MainActivity::class.java)
                 })
             }
 
-            alert.hide()
         }
     }
 
@@ -54,6 +57,7 @@ class LoginActivity : AppCompatActivity() {
         tilEmail = find(R.id.til_email)
         tilPassword = find(R.id.til_password)
         bLogin = find(R.id.b_login)
+        bSignUp = find(R.id.b_sign_up)
         bGoogleLogin = find(R.id.b_google_login)
 
         bLogin?.onClick {
@@ -62,13 +66,7 @@ class LoginActivity : AppCompatActivity() {
                 return@onClick
 
             try {
-                val pd = indeterminateProgressDialog("Signing in...")
-                pd.show()
-                doAsync {
-                    ServicesContainer.userInteractionService.signIn(this@LoginActivity, tilEmail?.editText?.text.toString(), tilPassword?.editText?.text.toString())
-                    runOnUiThread({ pd.hide() })
-                }
-
+                ServicesContainer.userInteractionService.signIn(this@LoginActivity, tilEmail?.editText?.text.toString(), tilPassword?.editText?.text.toString())
                 prepareToLogin()
             } catch (e: Exception) {
                 this@LoginActivity.toast(e.message.toString())

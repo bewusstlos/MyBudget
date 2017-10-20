@@ -59,10 +59,11 @@ class BudgetService {
 
     fun getTransactions(): List<BudgetTransaction>? {
         val tcs: TaskCompletionSource<List<BudgetTransaction>?> = TaskCompletionSource()
-        val ref = FirebaseDatabase.getInstance().getReference("/users/${FirebaseAuth.getInstance().currentUser?.uid}/budget/expenses")
+        val ref = FirebaseDatabase.getInstance().getReference("/users/${FirebaseAuth.getInstance().currentUser?.uid}/budget/transactions")
         ref.addChildEventListener(object : ChildEventListener {
             override fun onChildAdded(p0: DataSnapshot?, p1: String?) {
                 val s = p0?.value
+
             }
 
             override fun onChildChanged(p0: DataSnapshot?, p1: String?) {

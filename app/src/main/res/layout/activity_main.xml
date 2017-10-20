@@ -54,7 +54,7 @@
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
                 android:layout_marginBottom="@dimen/activity_vertical_margin"
-                android:src="@drawable/ic_arrow_downward" />
+                android:src="@drawable/ic_arrow_downward_white" />
 
             <TextView
                 android:id="@+id/l_add_income"
@@ -83,7 +83,7 @@
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
                 android:layout_marginBottom="@dimen/activity_vertical_margin"
-                android:src="@drawable/ic_arrow_upward" />
+                android:src="@drawable/ic_arrow_upward_white" />
 
             <TextView
                 android:id="@+id/l_add_expense"

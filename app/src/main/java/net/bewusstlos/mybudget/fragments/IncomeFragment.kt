@@ -7,8 +7,7 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import kotlinx.android.synthetic.main.fragment_expenses.view.*
-import kotlinx.android.synthetic.main.fragment_income.*
+import kotlinx.android.synthetic.main.fragment_income.view.*
 import net.bewusstlos.mybudget.R
 import net.bewusstlos.mybudget.adapters.TransactionAdapter
 import net.bewusstlos.mybudget.services.ServicesContainer
@@ -41,11 +40,10 @@ class IncomeFragment : Fragment() {
         // Inflate the layout for this fragment
         val view = inflater!!.inflate(R.layout.fragment_income, container, false)
         with(view) {
-            val transactions = ServicesContainer.budgetService.currentBudget?.transactions?.map { it.value }?.filter { it.value > 0 }?.sortedByDescending { it.date }?.toMutableList()
-            if (transactions != null) {
-                expenses.layoutManager = LinearLayoutManager(this@IncomeFragment.context)
-                incomeAdapter = TransactionAdapter(this@IncomeFragment.context, transactions)
-                expenses.adapter = incomeAdapter
+            incomes.layoutManager = LinearLayoutManager(this@IncomeFragment.context)
+            if (ServicesContainer.budgetService.currentBudget != null) {
+                incomeAdapter = TransactionAdapter(this@IncomeFragment.context, ServicesContainer.budgetService.currentBudget!!.incomes)
+                incomes.adapter = incomeAdapter
             }
         }
         return view
@@ -53,7 +51,7 @@ class IncomeFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        expenses.invalidate()
+        incomeAdapter.notifyDataSetChanged()
     }
 
     /**

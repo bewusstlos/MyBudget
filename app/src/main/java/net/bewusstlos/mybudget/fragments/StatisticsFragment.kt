@@ -1,5 +1,6 @@
 package net.bewusstlos.mybudget.fragments
 
+import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -32,6 +33,8 @@ class StatisticsFragment : Fragment() {
     private var mParam1: String? = null
     private var mParam2: String? = null
 
+    lateinit private var expensesChart: PieChart
+    lateinit private var incomesChart: PieChart
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,22 +48,29 @@ class StatisticsFragment : Fragment() {
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         val view = inflater!!.inflate(R.layout.fragment_statistics, container, false)
-        val expensesList = ServicesContainer.budgetService.currentBudget?.transactions?.map { it.value }?.filter { it.value < 0 }?.groupBy { it.category }
+        expensesChart = view.find(R.id.expenses_chart)
+        incomesChart = view.find(R.id.incomes_chart)
+        populateExpenses()
+        populateIncomes()
+        return view
+    }
+
+    fun populateExpenses() {
+        val expensesList = ServicesContainer.budgetService.currentBudget?.expenses?.groupBy { it.category }
         var expensesData: MutableMap<String, Double> = mutableMapOf()
         if (expensesList != null)
             for (expense in expensesList) {
                 expensesData.put(expense.key, expense.value.sumByDouble { it.value.toDouble() })
             }
-        var expensesChart = view.find<PieChart>(R.id.expenses_chart)
         if (expensesList != null) {
             val expensesPieEntries = mutableListOf<PieEntry>()
             for (item in expensesData) {
                 expensesPieEntries.add(PieEntry(item.value.toFloat() * -1, item.key))
             }
-            var pieDataSet = PieDataSet(expensesPieEntries, "Expenses")
-            pieDataSet.colors = ColorTemplate.MATERIAL_COLORS.toMutableList()
+            var pieDataSet = PieDataSet(expensesPieEntries, "")
+            pieDataSet.colors = ColorTemplate.PASTEL_COLORS.toMutableList()
             pieDataSet.valueTextSize = 20F
-            pieDataSet.valueTextColor = resources.getColor(R.color.colorPrimary)
+            pieDataSet.valueTextColor = Color.WHITE
             pieDataSet.valueFormatter = object : IValueFormatter {
                 override fun getFormattedValue(value: Float, entry: Entry?, dataSetIndex: Int, viewPortHandler: ViewPortHandler?): String {
                     return "${"%.2f".format(value)} %"
@@ -70,9 +80,39 @@ class StatisticsFragment : Fragment() {
             var pieData = PieData(pieDataSet)
             expensesChart.data = PieData(pieDataSet)
             expensesChart.setUsePercentValues(true)
+            expensesChart.legend.isEnabled = false
             expensesChart.invalidate()
         }
-        return view
+    }
+
+    fun populateIncomes() {
+        val incomesList = ServicesContainer.budgetService.currentBudget?.incomes?.groupBy { it.category }
+        var incomesData: MutableMap<String, Double> = mutableMapOf()
+        if (incomesList != null)
+            for (expense in incomesList) {
+                incomesData.put(expense.key, expense.value.sumByDouble { it.value.toDouble() })
+            }
+        if (incomesList != null) {
+            val incomesPieEntries = mutableListOf<PieEntry>()
+            for (item in incomesData) {
+                incomesPieEntries.add(PieEntry(item.value.toFloat(), item.key))
+            }
+            var pieDataSet = PieDataSet(incomesPieEntries, "")
+            pieDataSet.colors = ColorTemplate.PASTEL_COLORS.toMutableList()
+            pieDataSet.valueTextSize = 20F
+            pieDataSet.valueTextColor = Color.WHITE
+            pieDataSet.valueFormatter = object : IValueFormatter {
+                override fun getFormattedValue(value: Float, entry: Entry?, dataSetIndex: Int, viewPortHandler: ViewPortHandler?): String {
+                    return "${"%.2f".format(value)} %"
+                }
+            }
+            pieDataSet.sliceSpace = 3F
+            var pieData = PieData(pieDataSet)
+            incomesChart.data = PieData(pieDataSet)
+            incomesChart.setUsePercentValues(true)
+            incomesChart.legend.isEnabled = false
+            incomesChart.invalidate()
+        }
     }
 
     /**

@@ -1,5 +1,9 @@
 package net.bewusstlos.mybudget.fragments
 
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.net.Uri
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -7,7 +11,6 @@ import android.support.v7.widget.LinearLayoutManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import kotlinx.android.synthetic.main.fragment_expenses.*
 import kotlinx.android.synthetic.main.fragment_expenses.view.*
 import net.bewusstlos.mybudget.R
 import net.bewusstlos.mybudget.adapters.TransactionAdapter
@@ -22,6 +25,8 @@ import net.bewusstlos.mybudget.services.ServicesContainer
  * create an instance of this fragment.
  */
 class ExpensesFragment : Fragment() {
+
+    val TRANSACTIONS_RECEIVED = "Transactions received"
 
     lateinit var expensesAdapter: TransactionAdapter
     // TODO: Rename and change types of parameters
@@ -40,13 +45,20 @@ class ExpensesFragment : Fragment() {
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         val view = inflater!!.inflate(R.layout.fragment_expenses, container, false)
+        ServicesContainer.budgetService.getTransactions()
         with(view) {
-            val s = ServicesContainer.budgetService.currentBudget?.transactions
-            val transactions = ServicesContainer.budgetService.currentBudget?.transactions?.map { it.value }?.filter { it.value < 0 }?.sortedByDescending { it.date }?.toMutableList()
-            if (transactions != null) {
                 expenses.layoutManager = LinearLayoutManager(this@ExpensesFragment.context)
-                expensesAdapter = TransactionAdapter(this@ExpensesFragment.context, transactions)
+            if (ServicesContainer.budgetService.currentBudget != null) {
+                expensesAdapter = TransactionAdapter(this@ExpensesFragment.context, ServicesContainer.budgetService.currentBudget!!.expenses)
                 expenses.adapter = expensesAdapter
+            }
+
+        }
+        val intentFilter = IntentFilter(TRANSACTIONS_RECEIVED)
+
+        val broadcastReceiver = object : BroadcastReceiver() {
+            override fun onReceive(p0: Context?, p1: Intent?) {
+                expensesAdapter.notifyDataSetChanged()
             }
         }
         return view
@@ -54,7 +66,8 @@ class ExpensesFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        expenses.invalidate()
+        expensesAdapter.notifyDataSetChanged()
+
     }
 
     /**

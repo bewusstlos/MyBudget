@@ -17,16 +17,15 @@ import net.bewusstlos.mybudget.R
  * Created by bewusstlos on 10/11/2017.
  */
 class UserInteractionService {
-
+    //TODO: fix re-sign in action
     fun signIn(activity: Activity, email: String, password: String) {
         val firebaseAuth = FirebaseAuth.getInstance()
         firebaseAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(activity, { task: Task<AuthResult> ->
             if (task.isSuccessful) {
-                //
+                task.result
             } else {
                 throw task.exception ?: IllegalArgumentException("Login failed")
             }
-
         })
     }
 
@@ -34,10 +33,9 @@ class UserInteractionService {
         val firebaseAuth = FirebaseAuth.getInstance()
         firebaseAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(activity, { task: Task<AuthResult> ->
             if (task.isSuccessful)
-            //
-            else {
-                throw Exception("Authentication failed")
-            }
+                task.result
+            else
+                throw Exception(task.exception)
         })
     }
 
@@ -49,7 +47,7 @@ class UserInteractionService {
         return GoogleApiClient.Builder(activity)
                 .enableAutoManage(activity, { connectionResult: ConnectionResult ->
                     if (!connectionResult.isSuccess)
-                        throw Exception("Connection failed")
+                        throw Exception(connectionResult.errorMessage)
                 })
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build()
@@ -69,5 +67,8 @@ class UserInteractionService {
 
     inline fun logOut() {
         FirebaseAuth.getInstance().signOut()
+        if (ServicesContainer.budgetService.currentBudget != null) {
+            ServicesContainer.budgetService.currentBudget = null
+        }
     }
 }

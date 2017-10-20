@@ -12,11 +12,13 @@ import kotlinx.android.synthetic.main.activity_main.*
 import net.bewusstlos.mybudget.R
 import net.bewusstlos.mybudget.common.addFragment
 import net.bewusstlos.mybudget.common.navigateTo
+import net.bewusstlos.mybudget.common.reattachFragment
 import net.bewusstlos.mybudget.common.replaceFragment
 import net.bewusstlos.mybudget.fragments.ExpensesFragment
 import net.bewusstlos.mybudget.fragments.IncomeFragment
 import net.bewusstlos.mybudget.fragments.StatisticsFragment
 import net.bewusstlos.mybudget.services.ServicesContainer
+import net.hockeyapp.android.CrashManager
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.find
 import org.jetbrains.anko.sdk25.coroutines.onClick
@@ -59,7 +61,8 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        val budget = ServicesContainer.budgetService.getBudget()
+
+        CrashManager.register(this)
         val toolbar: Toolbar = find(R.id.toolbar)
 
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
@@ -110,12 +113,14 @@ class MainActivity : AppCompatActivity() {
         }
 
         b_add_income.onClick {
+            add.performClick()
             val i = Intent(this@MainActivity, AddTransactionActivity::class.java)
             i.putExtra("TypeOfTransaction", "Income")
             startActivity(i)
         }
 
         b_add_expense.onClick {
+            add.performClick()
             val i = Intent(this@MainActivity, AddTransactionActivity::class.java)
             i.putExtra("TypeOfTransaction", "Expense")
             startActivity(i)
@@ -129,6 +134,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+        reattachFragment()
         setBudgetTitle()
     }
 }

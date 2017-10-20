@@ -20,15 +20,17 @@ class AddBudgetActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_budget)
-
-        selected_currency.text = Currency.getInstance(resources.configuration.locale).currencyCode
         selectedCurrency = Currency.getInstance(resources.configuration.locale)
+        selected_currency.text = selectedCurrency?.currencyCode
+        selected_currency2.text = selectedCurrency?.currencyCode
+
 
         s_currency.onClick {
             val selectCurrencyDialog = AlertDialog.Builder(this@AddBudgetActivity)
                     .setTitle(resources.getString(R.string.select_currency))
                     .setItems(allCurrencies.map { it -> it.displayName }.toTypedArray(), DialogInterface.OnClickListener { _, i ->
                         selected_currency.text = allCurrencies[i].currencyCode
+                        selected_currency2.text = allCurrencies[i].currencyCode
                     })
                     .create()
             selectCurrencyDialog.show()

@@ -5,7 +5,7 @@
     tools:context="net.bewusstlos.mybudget.fragments.IncomeFragment">
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/expenses"
+        android:id="@+id/incomes"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 

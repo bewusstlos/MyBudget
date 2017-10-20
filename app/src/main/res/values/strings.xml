@@ -32,4 +32,6 @@
     <string name="how_much_money">How much money you have now?</string>
     <string name="welcome">Welcome!</string>
     <string name="select_currency">Select currency</string>
+    <string name="expenses">Expenses</string>
+    <string name="incomes">Incomes</string>
 </resources>

@@ -4,8 +4,33 @@
     android:layout_height="match_parent"
     tools:context="net.bewusstlos.mybudget.fragments.StatisticsFragment">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/expenses"
+            android:textAlignment="center" />
     <com.github.mikephil.charting.charts.PieChart
         android:id="@+id/expenses_chart"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/incomes"
+            android:textAlignment="center" />
+
+        <com.github.mikephil.charting.charts.PieChart
+            android:id="@+id/incomes_chart"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+    </LinearLayout>
+
 </RelativeLayout>
