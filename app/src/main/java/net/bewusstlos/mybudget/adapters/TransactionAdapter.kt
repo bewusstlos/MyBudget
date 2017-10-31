@@ -43,7 +43,7 @@ class TransactionAdapter(val context: Context, var list: MutableList<BudgetTrans
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bind(item: BudgetTransaction, shouldShowDate: Boolean = false) = with(itemView) {
             category.text = item.category
-            value.text = item.value.toString()
+            value.text = "%.2f".format(item.value)
             if (shouldShowDate) {
                 date.visibility = View.VISIBLE
                 var calendar = Calendar.getInstance()

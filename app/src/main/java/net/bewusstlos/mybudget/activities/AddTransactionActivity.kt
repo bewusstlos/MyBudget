@@ -11,7 +11,9 @@ import android.widget.TextView
 import kotlinx.android.synthetic.main.activity_add_transaction.*
 import net.bewusstlos.mybudget.R
 import net.bewusstlos.mybudget.models.BudgetTransaction
+import net.bewusstlos.mybudget.services.CategoriesService
 import net.bewusstlos.mybudget.services.ServicesContainer
+import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.find
 import org.jetbrains.anko.sdk25.coroutines.onClick
 import org.jetbrains.anko.selector
@@ -120,12 +122,19 @@ class AddTransactionActivity : AppCompatActivity(), DatePickerDialog.OnDateSetLi
             yesterday.typeface = Typeface.DEFAULT
         }, Calendar.getInstance().get(Calendar.YEAR), Calendar.getInstance().get(Calendar.MONTH), Calendar.getInstance().get(Calendar.DAY_OF_MONTH))
 
-        val categories = listOf("House", "Food", "Entertaiment", "Other")
-        select_category.onClick {
-            selector("Choose category", categories, { _, i ->
-                category.text = categories[i]
-            })
+        val categories = if (intent.getStringExtra(TYPE_OF_TRANSACTION) == "Expense") CategoriesService.expenseCategories else CategoriesService.incomeCategories
+
+        doAsync {
+            runOnUiThread {
+                select_category.onClick {
+                    selector("Choose category", categories, { _, i ->
+                        category.text = categories[i]
+                    })
+                }
+            }
         }
+
+
 
         b_done.onClick {
             ServicesContainer.budgetService.addTransaction(

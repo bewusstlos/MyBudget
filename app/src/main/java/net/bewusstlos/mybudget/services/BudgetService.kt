@@ -18,6 +18,7 @@ class BudgetService {
     fun getBudget(): Budget? {
         val tcs: TaskCompletionSource<Budget?> = TaskCompletionSource()
         val ref = FirebaseDatabase.getInstance().getReference("/users/${FirebaseAuth.getInstance().currentUser?.uid}/budget")
+        ref.keepSynced(true)
         ref.addValueEventListener(object : ValueEventListener {
             override fun onCancelled(p0: DatabaseError?) {
 

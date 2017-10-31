@@ -12,7 +12,7 @@ open class Budget() {
         set(value) {
             expenses = value.map { it.value }.filter { it.value < 0 }.sortedByDescending { it.date }.toMutableList()
             incomes = value.map { it.value }.filter { it.value > 0 }.sortedByDescending { it.date }.toMutableList()
-            //incomes = value.map { it.value }.subtract(expenses).sortedByDescending { it.date }.toMutableList()
+            field = mutableMapOf()
         }
     @Exclude
     var expenses: MutableList<BudgetTransaction> = mutableListOf()

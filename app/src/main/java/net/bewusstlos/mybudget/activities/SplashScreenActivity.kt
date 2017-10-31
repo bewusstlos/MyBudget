@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity
 import com.google.firebase.auth.FirebaseAuth
 import net.bewusstlos.mybudget.R
 import net.bewusstlos.mybudget.common.navigateTo
+import net.bewusstlos.mybudget.services.CategoriesService
 import net.bewusstlos.mybudget.services.ServicesContainer
 import org.jetbrains.anko.doAsync
 
@@ -16,6 +17,8 @@ class SplashScreenActivity : AppCompatActivity() {
         setContentView(R.layout.activity_splash_screen)
         if (FirebaseAuth.getInstance().currentUser != null) {
             doAsync {
+                CategoriesService.populateCategories("expense_categories")
+                CategoriesService.populateCategories("income_categories")
                 if (ServicesContainer.budgetService.getBudget() == null)
                     runOnUiThread({ navigateTo(AddBudgetActivity::class.java, Intent.FLAG_ACTIVITY_CLEAR_TOP) })
                 else
@@ -24,5 +27,6 @@ class SplashScreenActivity : AppCompatActivity() {
         } else {
             navigateTo(LoginActivity::class.java, Intent.FLAG_ACTIVITY_CLEAR_TOP)
         }
+        finish()
     }
 }
